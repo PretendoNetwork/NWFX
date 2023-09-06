@@ -88,7 +88,7 @@ NWFX supports all the basic swapping methods provided by HTMX
 - `beforeend` Appends the content after the last child inside the target
 - `afterend` Appends the content after the target in the targets parent element
 - `delete` Ignores response and deletes the target
-- `none` Do nothing and do not delete taget (Out of band swaps and response headers are *NOT* yet implemented)
+- `none` Do nothing and do not delete target (Out of band swaps and response headers are *NOT* yet implemented)
 
 ```html
 <div nwfx-get="/get-other-content" nwfx-swap="outerHTML">
