@@ -57,7 +57,7 @@ If no trigger is set, the same defaults found in HTMX are used
 ### Trigger Modifiers
 The following trigger modifiers are supported
 
-- `once` Only allow an element to trigger it's event once
+- `once` Only allow an element to trigger it's event once. If using this modifer, once the event has been triggered, the element is given the `nwfx-triggered` attribute and any future events are rejected
 
 ```html
 <div nwfx-get="/get-other-content" nwfx-trigger="click once">
