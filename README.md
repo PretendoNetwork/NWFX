@@ -22,7 +22,7 @@ Due to the above mentioned limitations, a basic form of element hydration is imp
 A subset of the HTMX api is implemented and can be used simply by replacing attributes `hx` with `nwfx` in most simple usages. The current list of supported features is as follows
 
 ### Requests
-All elements MUST have one of the following attributes to be hydrated by NWFX
+All elements MUST have one of the following attributes to be hydrated by NWFX. When a request is being made, the element which triggered the request is given the `nwfx-request` class, and any additional triggers are rejected. Only one request per element may be in flight at a time
 
 - `nwfx-get` Issues a GET request
 - `nwfx-post` Issues a POST request (Does not currently send data)
