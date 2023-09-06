@@ -22,11 +22,19 @@ Due to the above mentioned limitations, a basic form of element hydration is imp
 A subset of the HTMX api is implemented and can be used simply by replacing attributes `hx` with `nwfx` in most simple usages. The current list of supported features is as follows
 
 ### Requests
-- `nwfx-get` requests
-- `nwfx-post` requests (Does not currently send data)
-- `nwfx-put` requests (Does not currently send data)
-- `nwfx-patch` requests (Does not currently send data)
-- `nwfx-delete` requests (Does not currently send data)
+All elements MUST have one of the following attributes to be hydrated by NWFX
+
+- `nwfx-get` Issues a GET request
+- `nwfx-post` Issues a POST request (Does not currently send data)
+- `nwfx-put` Issues a PUT request (Does not currently send data)
+- `nwfx-patch` Issues a PATCH request (Does not currently send data)
+- `nwfx-delete` Issues a DELETE request
+
+```html
+<div nwfx-get="/get-other-content">
+	Click me!
+</div>
+```
 
 ### Triggers
 A basic `nwfx-trigger` implementation is supported. Only the following events are supported
@@ -40,13 +48,35 @@ If no trigger is set, the same defaults found in HTMX are used
 - `submit` for `<form>` elements
 - `click` for everything else
 
+```html
+<div nwfx-get="/get-other-content" nwfx-trigger="load">
+	I run and get replaced when loaded
+</div>
+```
+
 ### Trigger Modifiers
 The following trigger modifiers are supported
 
 - `once` Only allow an element to trigger it's event once
 
+```html
+<div nwfx-get="/get-other-content" nwfx-trigger="click once">
+	I only run once
+</div>
+```
+
 ### Targets
 By default the target element is the element dispatching the event. Targeting a different element is supported through the `nwfx-target` attribute. This attribute takes in a query selector
+
+```html
+<div nwfx-get="/get-other-content" nwfx-target="#replace-me">
+	I replace someone else
+</div>
+
+<div id="replace-me">
+	My content gets replaced
+</div>
+```
 
 ### Swapping
 NWFX supports all the basic swapping methods provided by HTMX
@@ -59,6 +89,12 @@ NWFX supports all the basic swapping methods provided by HTMX
 - `afterend` Appends the content after the target in the targets parent element
 - `delete` Ignores response and deletes the target
 - `none` Do nothing and do not delete taget (Out of band swaps and response headers are *NOT* yet implemented)
+
+```html
+<div nwfx-get="/get-other-content" nwfx-swap="outerHTML">
+	My content does not get replaced, my whole self does!
+</div>
+```
 
 ### Indicators
 Indicators are implemented in the same way as HTMX. Every element with the `nwfx-indicator` class is hidden by default, and is shown again if the parent element has the `nwfx-request` class. By default the following css is used
@@ -79,3 +115,10 @@ Indicators are implemented in the same way as HTMX. Every element with the `nwfx
 ```
 
 When an element is firing an AJAX request the `nwfx-request` class is added to the element, showing all `nwfx-indicator` elements. It is removed after the AJAX request finishes, hiding them again
+
+```html
+<div nwfx-get="/get-other-content">
+	Click me!
+	<img class="nwfx-indicator" src="spinner.gif">
+</div>
+```
