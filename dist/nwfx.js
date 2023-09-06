@@ -58,6 +58,7 @@ function handleNWFXEvent(event) {
     var triggerEvent = 'click';
     var verb = '';
     var url = '';
+    var promptInput = '';
     if (!triggerTarget || !(triggerTarget instanceof HTMLElement)) {
         return;
     }
@@ -116,6 +117,12 @@ function handleNWFXEvent(event) {
     if (triggerSettings.includes('once')) {
         triggerTarget.setAttribute('nwfx-triggered', 'true');
     }
+    if (triggerTarget.hasAttribute('nwfx-prompt')) {
+        promptInput = prompt(triggerTarget.getAttribute('nwfx-prompt'));
+        if (promptInput === null) {
+            return;
+        }
+    }
     triggerTarget.classList.add('nwfx-request');
     var xhr = new XMLHttpRequest();
     xhr.open(verb, url, true);
@@ -170,6 +177,9 @@ function handleNWFXEvent(event) {
     }
     if (swapTarget && swapTarget instanceof HTMLElement && swapTarget.hasAttribute('id')) {
         xhr.setRequestHeader('NWFX-Target', swapTarget.id);
+    }
+    if (triggerTarget.hasAttribute('nwfx-prompt')) {
+        xhr.setRequestHeader('NWFX-Prompt', promptInput);
     }
     xhr.send();
 }

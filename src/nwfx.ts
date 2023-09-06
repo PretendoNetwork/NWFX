@@ -70,8 +70,9 @@ function handleNWFXEvent(event: Event): void {
 	let swapArea: SwapArea = 'innerHTML';
 	let triggerSettings: string[] = [];
 	let triggerEvent = 'click';
-	let verb: string = '';
+	let verb = '';
 	let url: string | null = '';
+	let promptInput: string | null = '';
 
 	if (!triggerTarget || !(triggerTarget instanceof HTMLElement)) {
 		return;
@@ -137,6 +138,14 @@ function handleNWFXEvent(event: Event): void {
 		triggerTarget.setAttribute('nwfx-triggered', 'true');
 	}
 
+	if (triggerTarget.hasAttribute('nwfx-prompt')) {
+		promptInput = prompt(triggerTarget.getAttribute('nwfx-prompt')!);
+
+		if (promptInput === null) {
+			return;
+		}
+	}
+
 	triggerTarget.classList.add('nwfx-request');
 
 	const xhr = new XMLHttpRequest();
@@ -199,6 +208,10 @@ function handleNWFXEvent(event: Event): void {
 
 	if (swapTarget && swapTarget instanceof HTMLElement && swapTarget.hasAttribute('id')) {
 		xhr.setRequestHeader('NWFX-Target', swapTarget.id);
+	}
+
+	if (triggerTarget.hasAttribute('nwfx-prompt')) {
+		xhr.setRequestHeader('NWFX-Prompt', promptInput);
 	}
 
 	xhr.send();
