@@ -36,6 +36,15 @@ All elements MUST have one of the following attributes to be hydrated by NWFX. W
 </div>
 ```
 
+### Headers
+Currently only the following default headers are sent during requests. Eventually NWFX will support setting custom headers as well as respecting response headers
+
+- `NWFX-Request` Always set to "true"
+- `NWFX-Current-URL` The current `window.location.href`
+- `NWFX-Trigger` The `id` attribute of the element triggering the request. Not sent if element has no `id` set
+- `NWFX-Trigger-Name` The `name` attribute of the element triggering the request. Not sent if element has no `name` set
+- `NWFX-Target` The `id` attribute of the element targeted for swapping. Not sent if element has no `id` set
+
 ### Triggers
 A basic `nwfx-trigger` implementation is supported. Only the following events are supported
 

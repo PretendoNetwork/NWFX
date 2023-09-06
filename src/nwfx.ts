@@ -186,6 +186,21 @@ function handleNWFXEvent(event: Event): void {
 		}
 	};
 
+	xhr.setRequestHeader('NWFX-Request', 'true');
+	xhr.setRequestHeader('NWFX-Current-URL', window.location.href);
+
+	if (triggerTarget.hasAttribute('id')) {
+		xhr.setRequestHeader('NWFX-Trigger', triggerTarget.id);
+	}
+
+	if (triggerTarget.hasAttribute('name')) {
+		xhr.setRequestHeader('NWFX-Trigger-Name', triggerTarget.getAttribute('name')!);
+	}
+
+	if (swapTarget && swapTarget instanceof HTMLElement && swapTarget.hasAttribute('id')) {
+		xhr.setRequestHeader('NWFX-Target', swapTarget.id);
+	}
+
 	xhr.send();
 }
 
