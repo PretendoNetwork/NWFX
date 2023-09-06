@@ -3,12 +3,6 @@ window.onerror = function myErrorHandler(message, url, line): boolean {
 	return false;
 };
 
-if (!Array.prototype.includes) {
-	Array.prototype.includes = function(search): boolean {
-		return !!~this.indexOf(search);
-	};
-}
-
 const defaultTriggers: {
 	[key: string]: string
 } = {
@@ -37,13 +31,13 @@ const validEvents = [
 ];
 
 function hydrateHTMLEvents(element: HTMLElement | Document): void {
-	const elements = [
-		...element.querySelectorAll('[nwfx-get]:not([nwfx-hydrated])'),
-		...element.querySelectorAll('[nwfx-post]:not([nwfx-hydrated])'),
-		...element.querySelectorAll('[nwfx-put]:not([nwfx-hydrated])'),
-		...element.querySelectorAll('[nwfx-patch]:not([nwfx-hydrated])'),
-		...element.querySelectorAll('[nwfx-delete]:not([nwfx-hydrated])')
-	];
+	const elements: Element[] = [];
+
+	element.querySelectorAll('[nwfx-get]:not([nwfx-hydrated])').forEach(e => elements.push(e));
+	element.querySelectorAll('[nwfx-post]:not([nwfx-hydrated])').forEach(e => elements.push(e));
+	element.querySelectorAll('[nwfx-put]:not([nwfx-hydrated])').forEach(e => elements.push(e));
+	element.querySelectorAll('[nwfx-patch]:not([nwfx-hydrated])').forEach(e => elements.push(e));
+	element.querySelectorAll('[nwfx-delete]:not([nwfx-hydrated])').forEach(e => elements.push(e));
 
 	for (const element of elements) {
 		let event = 'click';
@@ -195,6 +189,7 @@ function handleNWFXEvent(event: Event): void {
 	xhr.send();
 }
 
-hydrateHTMLEvents(document);
-
-document.head.insertAdjacentHTML('beforeend', '<style>.nwfx-indicator{opacity:0;transition: opacity 200ms ease-in;}.nwfx-request .nwfx-indicator{opacity:1}.nwfx-request.indicator{opacity:1}</style>');
+document.addEventListener('DOMContentLoaded', () => {
+	document.head.insertAdjacentHTML('beforeend', '<style>.nwfx-indicator{opacity:0;transition: opacity 200ms ease-in;}.nwfx-request .nwfx-indicator{opacity:1}.nwfx-request.indicator{opacity:1}</style>');
+	hydrateHTMLEvents(document);
+});
