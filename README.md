@@ -16,7 +16,7 @@ This library will likely never be 1:1 compatible with the original HTMX api it i
 While the feature set may not be ever 1:1, the goal is the as accurately implement the functionality which is supported to provide an API which works how you'd expect it to work with HTMX
 
 ## Hydration
-Due to the above mentioned limitations, a basic form of element hydration is implemented when loading a page and new content from AJAX. Once a page loads, or new content is requested and inserted into the DOM, NWFX will query all un-hydrated elements in the modified area to add their trigger event listeners. Because of this, the `load` event is triggered during the hydration step, *not* the insertion step. Once an element has it's events attached to it, it is marked as hydrated and is not queried for again
+Due to the above mentioned limitations, a basic form of element hydration is implemented when loading a page and new content from AJAX. Once a page loads, or new content is requested and inserted into the DOM, NWFX will query all un-hydrated elements in the modified area to add their trigger event listeners. Because of this, the `load` event is triggered during the hydration step, *not* the insertion step. Once an element has it's events attached it is given the `nwfx-hydrated` attribute, excluding it from future queries
 
 ## API
 A subset of the HTMX api is implemented and can be used simply by replacing attributes `hx` with `nwfx` in most simple usages. The current list of supported features is as follows
