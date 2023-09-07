@@ -99,6 +99,8 @@ Both query strings and request bodies are built using elements `name` and `value
 
 By default, only the triggering element is checked. With `<form>` elements, the `<form>` element is not checked, and instead all it's children and inputs are used
 
+Custom data may also be provided through the `nwfx-vals` attribute. Values passed into `nwfx-vals` are set AFTER the elements attributes and form fields, overwriting any same keys if they exist. Unlike HTMX this must ALWAYS be valid JSON, no values are ever computed for simplicity and security. The `hx-vars` attribute is not implemented and never will be, for the same simplicity and security reasons as well as it being deprecated by HTMX anyway
+
 ```html
 <button name="button" value="some value" nwfx-get="/get">
 	Query string is "button=some%20value"
@@ -109,6 +111,10 @@ By default, only the triggering element is checked. With `<form>` elements, the 
 	<!-- POST body is username=YOUR_INPUT -->
 	<button type="submit">Submit</button>
 </form>
+
+<button nwfx-post="/post" nwfx-vals='{"hello": "world", "nwfx": "rocks"}'>
+	POST body is hello=world&nwfx=rocks
+</button>
 ```
 
 ### Triggers

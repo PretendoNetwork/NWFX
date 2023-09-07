@@ -161,6 +161,16 @@ function handleNWFXEvent(event) {
             }
         });
     }
+    if (triggerTarget.hasAttribute('nwfx-vals')) {
+        try {
+            var customData_1 = JSON.parse(triggerTarget.getAttribute('nwfx-vals'));
+            Object.keys(customData_1).forEach(function (key) {
+                requestData[key] = customData_1[key];
+            });
+        }
+        catch (_a) {
+        }
+    }
     var requestString = URLEncodeObject(requestData);
     if (verb === 'GET' && requestString.length > 0) {
         url = "".concat(url, "?").concat(requestString);
@@ -230,7 +240,7 @@ function handleNWFXEvent(event) {
         try {
             requestHeaders = JSON.parse(triggerTarget.getAttribute('nwfx-headers'));
         }
-        catch (_a) {
+        catch (_b) {
         }
     }
     if (triggerTarget.hasAttribute('id')) {

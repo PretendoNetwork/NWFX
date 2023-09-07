@@ -196,6 +196,18 @@ function handleNWFXEvent(event: Event): void {
 		});
 	}
 
+	if (triggerTarget.hasAttribute('nwfx-vals')) {
+		try {
+			const customData = JSON.parse(triggerTarget.getAttribute('nwfx-vals')!);
+
+			Object.keys(customData).forEach(key => {
+				requestData[key] = customData[key];
+			});
+		} catch {
+			// * Eat the error, we don't care for now
+		}
+	}
+
 	const requestString = URLEncodeObject(requestData);
 
 	if (verb === 'GET' && requestString.length > 0) {
