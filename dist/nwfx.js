@@ -21,8 +21,13 @@ var validSwapAreas = [
 ];
 var validEvents = [
     'click',
+    'change',
+    'submit',
     'load'
 ];
+function URLEncodeObject(object) {
+    return Object.keys(object).map(function (key) { return key + '=' + object[key]; }).join('&');
+}
 function hydrateHTMLEvents(element) {
     var elements = [];
     element.querySelectorAll('[nwfx-boost="true"]:not([nwfx-hydrated])').forEach(function (booster) {
@@ -136,6 +141,24 @@ function handleNWFXEvent(event) {
         triggerTarget.setAttribute('nwfx-triggered', 'true');
     }
     triggerTarget.classList.add('nwfx-request');
+    var requestData = {};
+    if (triggerTarget.nodeName !== 'FORM' && triggerTarget.hasAttribute('name') && triggerTarget.hasAttribute('value')) {
+        requestData[triggerTarget.getAttribute('name')] = triggerTarget.getAttribute('value');
+    }
+    if (triggerTarget.nodeName === 'FORM') {
+        triggerTarget.querySelectorAll('[name]').forEach(function (e) {
+            if (e instanceof HTMLInputElement || e instanceof HTMLTextAreaElement) {
+                requestData[e.name] = e.value;
+            }
+            else if (e.hasAttribute('value')) {
+                requestData[e.getAttribute('name')] = e.getAttribute('value');
+            }
+        });
+    }
+    var requestString = URLEncodeObject(requestData);
+    if (verb === 'GET' && requestString.length > 0) {
+        url = "".concat(url, "?").concat(requestString);
+    }
     document.dispatchEvent(new CustomEvent('nwfx:beforeRequest'));
     var xhr = new XMLHttpRequest();
     xhr.addEventListener('loadstart', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:loadstart')); });
@@ -208,8 +231,11 @@ function handleNWFXEvent(event) {
     if (triggerTarget.hasAttribute('nwfx-prompt')) {
         xhr.setRequestHeader('NWFX-Prompt', promptInput);
     }
+    if (verb !== 'GET') {
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    }
     document.dispatchEvent(new CustomEvent('nwfx:beforeSend'));
-    xhr.send();
+    xhr.send(requestString);
 }
 document.addEventListener('DOMContentLoaded', function () {
     document.head.insertAdjacentHTML('beforeend', '<style>.nwfx-indicator{opacity:0;transition: opacity 200ms ease-in;}.nwfx-request .nwfx-indicator{opacity:1}.nwfx-request.indicator{opacity:1}</style>');

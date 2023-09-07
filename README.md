@@ -82,6 +82,23 @@ Currently only the following default headers are sent during requests. Eventuall
 - `NWFX-Target` The `id` attribute of the element targeted for swapping. Not sent if element has no `id` set
 - `NWFX-Prompt` Set when prompting is being used
 
+### Query strings and bodies
+Both query strings and request bodies are built using elements `name` and `value` attributes. On `GET` requests these are converted into the requests query string. On all other requests this is sent as a request body with the `Content-Type` header set to `application/x-www-form-urlencoded`
+
+By default, only the triggering element is checked. With `<form>` elements, the `<form>` element is not checked, and instead all it's children and inputs are used
+
+```html
+<button name="button" value="some value" nwfx-get="/get">
+	Query string is "button=some%20value"
+</button>
+
+<form name="form" name="myform" value="this is ignored" nwfx-post="/post">
+	<input type="text" name="username">
+	<!-- POST body is username=YOUR_INPUT -->
+	<button type="submit">Submit</button>
+</form>
+```
+
 ### Triggers
 A basic `nwfx-trigger` implementation is supported. Only the following events are supported
 
