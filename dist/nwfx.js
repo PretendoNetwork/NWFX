@@ -136,12 +136,19 @@ function handleNWFXEvent(event) {
         triggerTarget.setAttribute('nwfx-triggered', 'true');
     }
     triggerTarget.classList.add('nwfx-request');
+    document.dispatchEvent(new CustomEvent('nwfx:beforeRequest'));
     var xhr = new XMLHttpRequest();
+    xhr.addEventListener('loadstart', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:loadstart')); });
+    xhr.addEventListener('loadend', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:loadend')); });
+    xhr.addEventListener('progress', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:progress')); });
+    xhr.addEventListener('load', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:load')); });
+    xhr.addEventListener('abort', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:abort')); });
     xhr.open(verb, url, true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (swapArea === 'delete') {
                 triggerTarget.remove();
+                document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
                 return;
             }
             var status_1 = xhr.status;
@@ -173,10 +180,18 @@ function handleNWFXEvent(event) {
                         hydrateHTMLEvents(html);
                     }
                 }
+                document.dispatchEvent(new CustomEvent('nwfx:afterOnLoad'));
             }
             else {
+                document.dispatchEvent(new CustomEvent('nwfx:responseError', {
+                    detail: {
+                        status: status_1,
+                        responseText: xhr.responseText
+                    }
+                }));
             }
             triggerTarget.classList.remove('nwfx-request');
+            document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
         }
     };
     xhr.setRequestHeader('NWFX-Request', 'true');
@@ -193,6 +208,7 @@ function handleNWFXEvent(event) {
     if (triggerTarget.hasAttribute('nwfx-prompt')) {
         xhr.setRequestHeader('NWFX-Prompt', promptInput);
     }
+    document.dispatchEvent(new CustomEvent('nwfx:beforeSend'));
     xhr.send();
 }
 document.addEventListener('DOMContentLoaded', function () {

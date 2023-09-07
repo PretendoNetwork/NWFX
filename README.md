@@ -21,6 +21,42 @@ Due to the above mentioned limitations, a basic form of element hydration is imp
 ## API
 A subset of the HTMX api is implemented and can be used simply by replacing attributes `hx` with `nwfx` in most simple usages. The current list of supported features is as follows
 
+### Events
+A subset of the HTMX events are fired during the execution on the trigger handlers. These events likely do not appear at the exact same times as they would in HTMX, as the libraries are designed very differently, but they should be close enough. Any non-standard HTMX events are marked as such
+
+- `nwfx:xhr:loadstart` - Dispatched on the XHR `loadstart` event. See MDN for details
+- `nwfx:xhr:loadend` - Dispatched on the XHR `loadend` event. See MDN for details
+- `nwfx:xhr:progress` - Dispatched on the XHR `progress` event. See MDN for details
+- `nwfx:xhr:load` - Dispatched on the XHR `load` event. See MDN for details. Non-standard HTMX event
+- `nwfx:xhr:abort` - Dispatched on the XHR `abort` event. See MDN for details
+- `nwfx:beforeRequest` - Dispatched right before `XMLHttpRequest` is created and setup
+- `nwfx:beforeSend` - Dispatched right before `xhr.send` is called
+- `nwfx:afterOnLoad` - Dispatched at the end of of handling a successful response
+- `nwfx:afterRequest` - Dispatched at the end of of the XHR request regardless of status
+- `nwfx:responseError` - Dispatched when XHR gets a non 200-300 response. Contains non-standard event data `event.detail.status` and `event.detail.responseText`
+
+```javascript
+document.addEventListener('nwfx:beforeSend', function() {
+	// Request is about to be sent
+	wiiuBrowser.showLoadingIcon(true);
+});
+document.addEventListener('nwfx:afterRequest', function() {
+	// Request finished, regardless of status
+	wiiuBrowser.showLoadingIcon(false);
+});
+document.addEventListener('nwfx:responseError', function(e) {
+	// Request was not 200-300
+	wiiuErrorViewer.openByCodeAndMessage(5984000, 'Error: Unable to handle request');
+	console.debug(e.detail.status);
+	console.debug(e.detail.responseText);
+	wiiuBrowser.showLoadingIcon(false);
+});
+document.addEventListener('nwfx:afterOnLoad', function() {
+	// Request was a success
+	wiiuBrowser.showLoadingIcon(false);
+});
+```
+
 ### Requests
 All elements MUST have one of the following attributes to be hydrated by NWFX. When a request is being made, the element which triggered the request is given the `nwfx-request` class, and any additional triggers are rejected. Only one request per element may be in flight at a time
 

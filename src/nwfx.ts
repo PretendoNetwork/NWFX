@@ -163,13 +163,22 @@ function handleNWFXEvent(event: Event): void {
 
 	triggerTarget.classList.add('nwfx-request');
 
+	document.dispatchEvent(new CustomEvent('nwfx:beforeRequest'));
+
 	const xhr = new XMLHttpRequest();
+
+	xhr.addEventListener('loadstart', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:loadstart')));
+	xhr.addEventListener('loadend', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:loadend')));
+	xhr.addEventListener('progress', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:progress')));
+	xhr.addEventListener('load', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:load')));
+	xhr.addEventListener('abort', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:abort')));
 
 	xhr.open(verb, url, true);
 	xhr.onreadystatechange = (): void => {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			if (swapArea === 'delete') {
 				triggerTarget.remove();
+				document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
 				return;
 			}
 
@@ -202,11 +211,19 @@ function handleNWFXEvent(event: Event): void {
 						hydrateHTMLEvents(html);
 					}
 				}
+
+				document.dispatchEvent(new CustomEvent('nwfx:afterOnLoad'));
 			} else {
-				// TODO - Handle this
+				document.dispatchEvent(new CustomEvent('nwfx:responseError', {
+					detail: {
+						status: status,
+						responseText: xhr.responseText
+					}
+				}));
 			}
 
 			triggerTarget.classList.remove('nwfx-request');
+			document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
 		}
 	};
 
@@ -229,6 +246,7 @@ function handleNWFXEvent(event: Event): void {
 		xhr.setRequestHeader('NWFX-Prompt', promptInput);
 	}
 
+	document.dispatchEvent(new CustomEvent('nwfx:beforeSend'));
 	xhr.send();
 }
 
