@@ -25,6 +25,13 @@ var validEvents = [
 ];
 function hydrateHTMLEvents(element) {
     var elements = [];
+    element.querySelectorAll('[nwfx-boost="true"]:not([nwfx-hydrated])').forEach(function (booster) {
+        booster.querySelectorAll('a:not([nwfx-hydrated])').forEach(function (a) {
+            a.setAttribute('nwfx-get', a.href);
+            a.setAttribute('nwfx-target', 'body');
+        });
+        booster.setAttribute('nwfx-hydrated', 'true');
+    });
     element.querySelectorAll('[nwfx-get]:not([nwfx-hydrated])').forEach(function (e) { return elements.push(e); });
     element.querySelectorAll('[nwfx-post]:not([nwfx-hydrated])').forEach(function (e) { return elements.push(e); });
     element.querySelectorAll('[nwfx-put]:not([nwfx-hydrated])').forEach(function (e) { return elements.push(e); });

@@ -33,6 +33,15 @@ const validEvents = [
 function hydrateHTMLEvents(element: HTMLElement | Document): void {
 	const elements: Element[] = [];
 
+	element.querySelectorAll('[nwfx-boost="true"]:not([nwfx-hydrated])').forEach(booster => {
+		booster.querySelectorAll('a:not([nwfx-hydrated])').forEach((a: Element) => {
+			a.setAttribute('nwfx-get', (a as HTMLAnchorElement).href); // * Just to make TypeScript happy
+			a.setAttribute('nwfx-target', 'body');
+		});
+
+		booster.setAttribute('nwfx-hydrated', 'true');
+	});
+
 	element.querySelectorAll('[nwfx-get]:not([nwfx-hydrated])').forEach(e => elements.push(e));
 	element.querySelectorAll('[nwfx-post]:not([nwfx-hydrated])').forEach(e => elements.push(e));
 	element.querySelectorAll('[nwfx-put]:not([nwfx-hydrated])').forEach(e => elements.push(e));

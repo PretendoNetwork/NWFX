@@ -133,3 +133,16 @@ When an element is firing an AJAX request the `nwfx-request` class is added to t
 	<img class="nwfx-indicator" src="spinner.gif">
 </div>
 ```
+
+### Boosting
+Elements with `nwfx-boost` set to `"true"` will have all of their children `a` tags converted into AJAX requests targeting the `body` element. Forms are currently not supported, and the URL bar does not update
+
+```html
+<div nwfx-boost="true">
+	<a href="/html">Boosted</a>
+	<!--
+		This gets converted into
+		<a href="/html" nwfx-get="/html" nwfx-target="body" nwfx-hydrated="true">Boosted</a>
+	-->
+</div>
+```
