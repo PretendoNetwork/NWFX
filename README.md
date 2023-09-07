@@ -44,8 +44,7 @@ Currently only the following default headers are sent during requests. Eventuall
 - `NWFX-Trigger` The `id` attribute of the element triggering the request. Not sent if element has no `id` set
 - `NWFX-Trigger-Name` The `name` attribute of the element triggering the request. Not sent if element has no `name` set
 - `NWFX-Target` The `id` attribute of the element targeted for swapping. Not sent if element has no `id` set
-
-If `nwfx-prompt` is set, NWFX will call `prompt` and send the users input in the `NWFX-Prompt` header. If the user cancels the prompt, the request is not sent and the element will be marked with `nwfx-triggered` if the `once` trigger modifier is used
+- `NWFX-Prompt` Set when prompting is being used
 
 ### Triggers
 A basic `nwfx-trigger` implementation is supported. Only the following events are supported
@@ -153,5 +152,14 @@ Elements with the `nwfx-confirm` attribute will ask the user to confirm the acti
 ```html
 <div nwfx-delete="/account" nwfx-confirm="Are you sure you want to delete your account?">
 	Delete account
+</div>
+```
+
+### Prompting
+Elements with the `nwfx-prompt` set will ask the user to enter input before issuing the AJAX request. The input is sent in the `NWFX-Prompt` header. Unlike the original HTMX library, if the `once` trigger modifier is used then the element is NOT marked as triggered even if the prompt is declined. I felt this was better user experience
+
+```html
+<div nwfx-post="/search" nwfx-prompt="Enter query">
+	Search
 </div>
 ```

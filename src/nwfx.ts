@@ -149,16 +149,16 @@ function handleNWFXEvent(event: Event): void {
 		}
 	}
 
-	if (triggerSettings.includes('once')) {
-		triggerTarget.setAttribute('nwfx-triggered', 'true');
-	}
-
 	if (triggerTarget.hasAttribute('nwfx-prompt')) {
 		promptInput = prompt(triggerTarget.getAttribute('nwfx-prompt')!);
 
 		if (promptInput === null) {
 			return;
 		}
+	}
+
+	if (triggerSettings.includes('once')) {
+		triggerTarget.setAttribute('nwfx-triggered', 'true');
 	}
 
 	triggerTarget.classList.add('nwfx-request');
