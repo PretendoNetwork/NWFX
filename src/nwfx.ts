@@ -269,25 +269,41 @@ function handleNWFXEvent(event: Event): void {
 	xhr.setRequestHeader('NWFX-Request', 'true');
 	xhr.setRequestHeader('NWFX-Current-URL', window.location.href);
 
+	let requestHeaders: {
+		[key: string]: string
+	} = {};
+
+	if (triggerTarget.hasAttribute('nwfx-headers')) {
+		try {
+			requestHeaders = JSON.parse(triggerTarget.getAttribute('nwfx-headers')!);
+		} catch {
+			// * Eat the error, we don't care for now
+		}
+	}
+
 	if (triggerTarget.hasAttribute('id')) {
-		xhr.setRequestHeader('NWFX-Trigger', triggerTarget.id);
+		requestHeaders['NWFX-Trigger'] = triggerTarget.id;
 	}
 
 	if (triggerTarget.hasAttribute('name')) {
-		xhr.setRequestHeader('NWFX-Trigger-Name', triggerTarget.getAttribute('name')!);
+		requestHeaders['NWFX-Trigger-Name'] = triggerTarget.getAttribute('name')!;
 	}
 
 	if (swapTarget && swapTarget instanceof HTMLElement && swapTarget.hasAttribute('id')) {
-		xhr.setRequestHeader('NWFX-Target', swapTarget.id);
+		requestHeaders['NWFX-Target'] = swapTarget.id;
 	}
 
 	if (triggerTarget.hasAttribute('nwfx-prompt')) {
-		xhr.setRequestHeader('NWFX-Prompt', promptInput);
+		requestHeaders['NWFX-Prompt'] = promptInput;
 	}
 
 	if (verb !== 'GET') {
-		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+		requestHeaders['Content-Type'] = 'application/x-www-form-urlencoded';
 	}
+
+	Object.keys(requestHeaders).forEach(key => {
+		xhr.setRequestHeader(key, requestHeaders[key]);
+	});
 
 	document.dispatchEvent(new CustomEvent('nwfx:beforeSend'));
 

@@ -73,7 +73,7 @@ All elements MUST have one of the following attributes to be hydrated by NWFX. W
 ```
 
 ### Headers
-Currently only the following default headers are sent during requests. Eventually NWFX will support setting custom headers as well as respecting response headers
+The following default headers are sent during requests. NWFX does not currently respect response headers
 
 - `NWFX-Request` Always set to "true"
 - `NWFX-Current-URL` The current `window.location.href`
@@ -81,6 +81,18 @@ Currently only the following default headers are sent during requests. Eventuall
 - `NWFX-Trigger-Name` The `name` attribute of the element triggering the request. Not sent if element has no `name` set
 - `NWFX-Target` The `id` attribute of the element targeted for swapping. Not sent if element has no `id` set
 - `NWFX-Prompt` Set when prompting is being used
+
+Custom request headers can be set on the triggering element using the `nwfx-headers` attribute, setting a JSON object of headers. Invalid JSON is ignored and no error is given
+
+```html
+<button nwfx-headers='{"x-token": "some token"}' nwfx-get="/get">
+	Click me
+</button>
+
+<button nwfx-headers='invalid' nwfx-get="/get">
+	Click me
+</button>
+```
 
 ### Query strings and bodies
 Both query strings and request bodies are built using elements `name` and `value` attributes. On `GET` requests these are converted into the requests query string. On all other requests this is sent as a request body with the `Content-Type` header set to `application/x-www-form-urlencoded`
