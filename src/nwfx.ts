@@ -45,6 +45,14 @@ function hydrateHTMLEvents(element: HTMLElement | Document): void {
 			a.setAttribute('nwfx-target', 'body');
 		});
 
+		booster.querySelectorAll('form:not([nwfx-hydrated])').forEach((form: Element) => {
+			const verb = (form as HTMLFormElement).method || 'post';
+			const url = (form as HTMLFormElement).action || window.location.href; // TODO - Maybe this shouldn't be the default
+
+			form.setAttribute(`nwfx-${verb.toLocaleLowerCase()}`, url);
+			form.setAttribute('nwfx-target', 'body');
+		});
+
 		booster.setAttribute('nwfx-hydrated', 'true');
 	});
 

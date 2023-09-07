@@ -189,7 +189,7 @@ When an element is firing an AJAX request the `nwfx-request` class is added to t
 ```
 
 ### Boosting
-Elements with `nwfx-boost` set to `"true"` will have all of their children `a` tags converted into AJAX requests targeting the `body` element. Forms are currently not supported, and the URL bar does not update
+Elements with `nwfx-boost` set to `"true"` will have all of their children `a` tags converted into AJAX requests targeting the `body` element. Forms use their `method` and `action` attributes to determine the HTTP verb and URL. The URL bar does not update
 
 ```html
 <div nwfx-boost="true">
@@ -197,6 +197,20 @@ Elements with `nwfx-boost` set to `"true"` will have all of their children `a` t
 	<!--
 		This gets converted into
 		<a href="/html" nwfx-get="/html" nwfx-target="body" nwfx-hydrated="true">Boosted</a>
+	-->
+</div>
+
+<div nwfx-boost="true">
+	<form action="/get">
+		<input type="text" name="test">
+		<button type="submit">Submit</button>
+	</form>
+	<!--
+		This gets converted into
+		<form action="/get" nwfx-get="/get" nwfx-target="body" nwfx-hydrated="true">
+			<input type="text" name="test">
+			<button type="submit">Submit</button>
+		</form>
 	-->
 </div>
 ```

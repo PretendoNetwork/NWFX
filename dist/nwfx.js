@@ -35,6 +35,12 @@ function hydrateHTMLEvents(element) {
             a.setAttribute('nwfx-get', a.href);
             a.setAttribute('nwfx-target', 'body');
         });
+        booster.querySelectorAll('form:not([nwfx-hydrated])').forEach(function (form) {
+            var verb = form.method || 'post';
+            var url = form.action || window.location.href;
+            form.setAttribute("nwfx-".concat(verb.toLocaleLowerCase()), url);
+            form.setAttribute('nwfx-target', 'body');
+        });
         booster.setAttribute('nwfx-hydrated', 'true');
     });
     element.querySelectorAll('[nwfx-get]:not([nwfx-hydrated])').forEach(function (e) { return elements.push(e); });
