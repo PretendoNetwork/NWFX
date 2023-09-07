@@ -86,6 +86,8 @@ Currently only the following default headers are sent during requests. Eventuall
 A basic `nwfx-trigger` implementation is supported. Only the following events are supported
 
 - `click`
+- `change`
+- `submit`
 - `load` (triggered during hydration)
 
 If no trigger is set, the same defaults found in HTMX are used
