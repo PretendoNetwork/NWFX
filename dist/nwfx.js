@@ -121,6 +121,11 @@ function handleNWFXEvent(event) {
     if (event.type !== triggerEvent) {
         return;
     }
+    if (triggerTarget.hasAttribute('nwfx-confirm')) {
+        if (!confirm(triggerTarget.getAttribute('nwfx-confirm'))) {
+            return;
+        }
+    }
     if (triggerSettings.includes('once')) {
         triggerTarget.setAttribute('nwfx-triggered', 'true');
     }

@@ -146,3 +146,12 @@ Elements with `nwfx-boost` set to `"true"` will have all of their children `a` t
 	-->
 </div>
 ```
+
+### Confirmation
+Elements with the `nwfx-confirm` attribute will ask the user to confirm the action before issuing the AJAX request. Unlike the original HTMX library, if the `once` trigger modifier is used then the element is NOT marked as triggered even if confirmation is declined. I felt this was better user experience
+
+```html
+<div nwfx-delete="/account" nwfx-confirm="Are you sure you want to delete your account?">
+	Delete account
+</div>
+```
