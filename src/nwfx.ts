@@ -3,9 +3,7 @@ window.onerror = function myErrorHandler(message, url, line): boolean {
 	return false;
 };
 
-const defaultTriggers: {
-	[key: string]: string
-} = {
+const defaultTriggers: Record<string, string> = {
 	'INPUT': 'change',
 	'TEXTAREA': 'change',
 	'SELECT': 'change',
