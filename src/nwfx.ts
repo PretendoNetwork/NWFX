@@ -3,6 +3,12 @@ window.onerror = function myErrorHandler(message, url, line): boolean {
 	return false;
 };
 
+// * This exists because the Old 3DS browser doesn't support
+// * state constants on XMLHttpRequest like XMLHttpRequest.DONE
+const XHRStates = {
+	DONE: 4,
+} as const;
+
 const defaultTriggers: Record<string, string> = {
 	'INPUT': 'change',
 	'TEXTAREA': 'change',
@@ -246,7 +252,7 @@ function handleNWFXEvent(event: Event): void {
 
 	xhr.open(verb, url, true);
 	xhr.onreadystatechange = (): void => {
-		if (xhr.readyState === XMLHttpRequest.DONE) {
+		if (xhr.readyState === XHRStates.DONE) {
 			if (swapArea === 'delete') {
 				triggerTarget.remove();
 				dispatchCustomEvent(document, 'nwfx:afterRequest');

@@ -3,6 +3,9 @@ window.onerror = function myErrorHandler(message, url, line) {
     alert('Error occured on line ' + line + ': ' + message);
     return false;
 };
+var XHRStates = {
+    DONE: 4,
+};
 var defaultTriggers = {
     'INPUT': 'change',
     'TEXTAREA': 'change',
@@ -192,7 +195,7 @@ function handleNWFXEvent(event) {
     xhr.addEventListener('abort', function () { return dispatchCustomEvent(document, 'nwfx:xhr:abort'); });
     xhr.open(verb, url, true);
     xhr.onreadystatechange = function () {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.readyState === XHRStates.DONE) {
             if (swapArea === 'delete') {
                 triggerTarget.remove();
                 dispatchCustomEvent(document, 'nwfx:afterRequest');
