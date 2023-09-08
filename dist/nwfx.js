@@ -274,4 +274,56 @@ Array.prototype.includes = function (search) {
 NodeList.prototype.forEach = function (callbackfn, thisArg) {
     [].forEach.call(this, callbackfn, thisArg);
 };
+if (Element.prototype.classList === undefined) {
+    var ClassList_1 = (function () {
+        function ClassList(element) {
+            this.element = element;
+            this.classList = this.element.className.split(' ');
+        }
+        ClassList.prototype.updateClassName = function () {
+            this.element.className = this.classList.join(' ');
+        };
+        ClassList.prototype.contains = function (token) {
+            return this.classList.includes(token);
+        };
+        ClassList.prototype.add = function () {
+            var tokens = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                tokens[_i] = arguments[_i];
+            }
+            for (var _a = 0, tokens_1 = tokens; _a < tokens_1.length; _a++) {
+                var token = tokens_1[_a];
+                this.classList.push(token);
+            }
+            this.updateClassName();
+        };
+        ClassList.prototype.remove = function () {
+            var tokens = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                tokens[_i] = arguments[_i];
+            }
+            for (var _a = 0, tokens_2 = tokens; _a < tokens_2.length; _a++) {
+                var token = tokens_2[_a];
+                var i = 0;
+                while (i < this.classList.length) {
+                    if (this.classList[i] === token) {
+                        this.classList.splice(i, 1);
+                    }
+                    else {
+                        ++i;
+                    }
+                }
+            }
+            this.updateClassName();
+        };
+        return ClassList;
+    }());
+    Object.defineProperty(Element.prototype, 'classList', {
+        get: function () {
+            return new ClassList_1(this);
+        },
+        enumerable: true,
+        configurable: true
+    });
+}
 //# sourceMappingURL=nwfx.js.map
