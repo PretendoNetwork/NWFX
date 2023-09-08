@@ -66,3 +66,27 @@ if (Element.prototype.classList === undefined) {
 		configurable: true
 	});
 }
+
+// * Old 3DS browser doesn't support CustomEvent
+// TODO - Maybe finish this? This polyfill doesn't work, it never sets on window. Remains "undefined"
+if (!window.CustomEvent) {
+	//class CustomEvent extends Event {
+	//	detail?: any;
+	//
+	//	constructor(type: string, eventInitDict?: CustomEventInit) {
+	//		super(type, eventInitDict);
+	//
+	//		this.initEvent(type, eventInitDict?.bubbles, eventInitDict?.cancelable);
+	//
+	//		if (eventInitDict?.detail) {
+	//			this.detail = eventInitDict.detail;
+	//		}
+	//	}
+	//}
+
+	// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+	// @ts-ignore
+	//window.CustomEvent = CustomEvent;
+	//alert(window.CustomEvent);
+	//alert(CustomEvent);
+}

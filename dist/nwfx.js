@@ -25,6 +25,14 @@ var validEvents = [
     'submit',
     'load'
 ];
+function dispatchCustomEvent(target, type, eventInitDict) {
+    var event = document.createEvent('Event');
+    event.initEvent(type, eventInitDict === null || eventInitDict === void 0 ? void 0 : eventInitDict.bubbles, eventInitDict === null || eventInitDict === void 0 ? void 0 : eventInitDict.cancelable);
+    if (eventInitDict === null || eventInitDict === void 0 ? void 0 : eventInitDict.detail) {
+        event.detail = eventInitDict.detail;
+    }
+    target.dispatchEvent(event);
+}
 function URLEncodeObject(object) {
     return Object.keys(object).map(function (key) { return key + '=' + object[key]; }).join('&');
 }
@@ -63,7 +71,7 @@ function hydrateHTMLEvents(element) {
         }
         element_1.addEventListener(event_1, handleNWFXEvent);
         if (event_1 === 'load') {
-            element_1.dispatchEvent(new Event('load'));
+            dispatchCustomEvent(element_1, 'load');
         }
         element_1.setAttribute('nwfx-hydrated', 'true');
     }
@@ -175,19 +183,19 @@ function handleNWFXEvent(event) {
     if (verb === 'GET' && requestString.length > 0) {
         url = "".concat(url, "?").concat(requestString);
     }
-    document.dispatchEvent(new CustomEvent('nwfx:beforeRequest'));
+    dispatchCustomEvent(document, 'nwfx:beforeRequest');
     var xhr = new XMLHttpRequest();
-    xhr.addEventListener('loadstart', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:loadstart')); });
-    xhr.addEventListener('loadend', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:loadend')); });
-    xhr.addEventListener('progress', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:progress')); });
-    xhr.addEventListener('load', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:load')); });
-    xhr.addEventListener('abort', function () { return document.dispatchEvent(new CustomEvent('nwfx:xhr:abort')); });
+    xhr.addEventListener('loadstart', function () { return dispatchCustomEvent(document, 'nwfx:xhr:loadstart'); });
+    xhr.addEventListener('loadend', function () { return dispatchCustomEvent(document, 'nwfx:xhr:loadend'); });
+    xhr.addEventListener('progress', function () { return dispatchCustomEvent(document, 'nwfx:xhr:progress'); });
+    xhr.addEventListener('load', function () { return dispatchCustomEvent(document, 'nwfx:xhr:load'); });
+    xhr.addEventListener('abort', function () { return dispatchCustomEvent(document, 'nwfx:xhr:abort'); });
     xhr.open(verb, url, true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (swapArea === 'delete') {
                 triggerTarget.remove();
-                document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
+                dispatchCustomEvent(document, 'nwfx:afterRequest');
                 return;
             }
             var status_1 = xhr.status;
@@ -219,18 +227,18 @@ function handleNWFXEvent(event) {
                         hydrateHTMLEvents(html);
                     }
                 }
-                document.dispatchEvent(new CustomEvent('nwfx:afterOnLoad'));
+                dispatchCustomEvent(document, 'nwfx:afterOnLoad');
             }
             else {
-                document.dispatchEvent(new CustomEvent('nwfx:responseError', {
+                dispatchCustomEvent(document, 'nwfx:responseError', {
                     detail: {
                         status: status_1,
                         responseText: xhr.responseText
                     }
-                }));
+                });
             }
             triggerTarget.classList.remove('nwfx-request');
-            document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
+            dispatchCustomEvent(document, 'nwfx:afterRequest');
         }
     };
     xhr.setRequestHeader('NWFX-Request', 'true');
@@ -261,7 +269,7 @@ function handleNWFXEvent(event) {
     Object.keys(requestHeaders).forEach(function (key) {
         xhr.setRequestHeader(key, requestHeaders[key]);
     });
-    document.dispatchEvent(new CustomEvent('nwfx:beforeSend'));
+    dispatchCustomEvent(document, 'nwfx:beforeSend');
     xhr.send(requestString);
 }
 document.addEventListener('DOMContentLoaded', function () {
@@ -325,5 +333,7 @@ if (Element.prototype.classList === undefined) {
         enumerable: true,
         configurable: true
     });
+}
+if (!window.CustomEvent) {
 }
 //# sourceMappingURL=nwfx.js.map

@@ -32,6 +32,28 @@ const validEvents = [
 	'load'
 ];
 
+// * This exists because the Old 3DS browser doesn't support
+// * the CustomEvent type. This is used to trick TypeScript
+// * into letting me define a "detail" property onto a regualr
+// * Event type
+interface DetailedCustomEvent extends Event {
+	detail?: any
+}
+
+// * This exists because the Old 3DS browser doesn't support
+// * the "new Event" constructor. Back to the dark ages. I know
+// * that "initEvent" is deprecated. We have no other choice
+function dispatchCustomEvent(target: Document | Element, type: string, eventInitDict?: CustomEventInit): void {
+	const event = <DetailedCustomEvent>document.createEvent('Event');
+	event.initEvent(type, eventInitDict?.bubbles, eventInitDict?.cancelable);
+
+	if (eventInitDict?.detail) {
+		event.detail = eventInitDict.detail;
+	}
+
+	target.dispatchEvent(event);
+}
+
 function URLEncodeObject(object: {[key: string]: string}): string {
 	return Object.keys(object).map(key => key + '=' + object[key]).join('&');
 }
@@ -80,7 +102,7 @@ function hydrateHTMLEvents(element: HTMLElement | Document): void {
 		element.addEventListener(event, handleNWFXEvent);
 
 		if (event === 'load') {
-			element.dispatchEvent(new Event('load'));
+			dispatchCustomEvent(element, 'load');
 		}
 
 		element.setAttribute('nwfx-hydrated', 'true');
@@ -214,22 +236,22 @@ function handleNWFXEvent(event: Event): void {
 		url = `${url}?${requestString}`;
 	}
 
-	document.dispatchEvent(new CustomEvent('nwfx:beforeRequest'));
+	dispatchCustomEvent(document, 'nwfx:beforeRequest');
 
 	const xhr = new XMLHttpRequest();
 
-	xhr.addEventListener('loadstart', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:loadstart')));
-	xhr.addEventListener('loadend', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:loadend')));
-	xhr.addEventListener('progress', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:progress')));
-	xhr.addEventListener('load', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:load')));
-	xhr.addEventListener('abort', () => document.dispatchEvent(new CustomEvent('nwfx:xhr:abort')));
+	xhr.addEventListener('loadstart', () => dispatchCustomEvent(document, 'nwfx:xhr:loadstart'));
+	xhr.addEventListener('loadend', () => dispatchCustomEvent(document, 'nwfx:xhr:loadend'));
+	xhr.addEventListener('progress', () => dispatchCustomEvent(document, 'nwfx:xhr:progress'));
+	xhr.addEventListener('load', () => dispatchCustomEvent(document, 'nwfx:xhr:load'));
+	xhr.addEventListener('abort', () => dispatchCustomEvent(document, 'nwfx:xhr:abort'));
 
 	xhr.open(verb, url, true);
 	xhr.onreadystatechange = (): void => {
 		if (xhr.readyState === XMLHttpRequest.DONE) {
 			if (swapArea === 'delete') {
 				triggerTarget.remove();
-				document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
+				dispatchCustomEvent(document, 'nwfx:afterRequest');
 				return;
 			}
 
@@ -263,18 +285,18 @@ function handleNWFXEvent(event: Event): void {
 					}
 				}
 
-				document.dispatchEvent(new CustomEvent('nwfx:afterOnLoad'));
+				dispatchCustomEvent(document, 'nwfx:afterOnLoad');
 			} else {
-				document.dispatchEvent(new CustomEvent('nwfx:responseError', {
+				dispatchCustomEvent(document, 'nwfx:responseError', {
 					detail: {
 						status: status,
 						responseText: xhr.responseText
 					}
-				}));
+				});
 			}
 
 			triggerTarget.classList.remove('nwfx-request');
-			document.dispatchEvent(new CustomEvent('nwfx:afterRequest'));
+			dispatchCustomEvent(document, 'nwfx:afterRequest');
 		}
 	};
 
@@ -317,7 +339,7 @@ function handleNWFXEvent(event: Event): void {
 		xhr.setRequestHeader(key, requestHeaders[key]);
 	});
 
-	document.dispatchEvent(new CustomEvent('nwfx:beforeSend'));
+	dispatchCustomEvent(document, 'nwfx:beforeSend');
 
 	xhr.send(requestString);
 }
